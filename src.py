@@ -110,6 +110,11 @@ async def main():
             
             Actor.log.info(f"Scraping completed. Total items: {len(results)}")
             
+            # Log proxy rotation summary if enabled
+            if proxy_configuration:
+                proxy_summary = scraper.get_proxy_summary()
+                Actor.log.info(proxy_summary)
+            
             # Count by type
             type_counts = {}
             for item in results:

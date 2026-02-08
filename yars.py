@@ -73,6 +73,10 @@ class YARS:
         
         # Request counter for proxy rotation logging
         self.request_count = 0
+        
+        # Track unique proxy IPs for rotation verification
+        self.proxy_ips_used = set()  # Track unique proxy IPs
+        self.last_proxy_ip = None    # Track last used proxy IP
 
         # Initialize session with cookies
         self._initialize_session()
@@ -178,6 +182,35 @@ class YARS:
         prefix = "[YARS]" if not self.config.debug_mode else "[YARS DEBUG]"
         print(f"{prefix} {message}")
     
+    def get_proxy_summary(self) -> str:
+        """Generate a summary of proxy rotation statistics"""
+        if not self.proxy_configuration:
+            return "Proxy rotation: Not enabled"
+        
+        unique_count = len(self.proxy_ips_used)
+        total_requests = self.request_count
+        
+        if total_requests == 0:
+            return "Proxy rotation: No requests made yet"
+        
+        rotation_rate = (unique_count / total_requests * 100) if total_requests > 0 else 0
+        
+        summary = f"📊 Proxy Rotation Summary:\n"
+        summary += f"   - Total requests: {total_requests}\n"
+        summary += f"   - Unique IPs used: {unique_count}\n"
+        summary += f"   - Rotation rate: {rotation_rate:.1f}%\n"
+        
+        if unique_count == 1 and total_requests > 1:
+            summary += f"   - ⚠️ WARNING: All requests used the same IP!"
+        elif rotation_rate >= 80:
+            summary += f"   - ✅ Excellent proxy rotation"
+        elif rotation_rate >= 50:
+            summary += f"   - ✓ Good proxy rotation"
+        else:
+            summary += f"   - ⚠️ Low proxy rotation (may impact scraping)"
+        
+        return summary
+    
     def _get_new_proxy(self) -> Optional[str]:
         """Get a new proxy URL from proxy configuration"""
         if not self.proxy_configuration:
@@ -201,6 +234,21 @@ class YARS:
             else:
                 # Not in async context, safe to use asyncio.run
                 proxy_url = loop.run_until_complete(self.proxy_configuration.new_url())
+            
+            # Extract and track proxy IP for rotation verification
+            if proxy_url and '@' in proxy_url:
+                proxy_endpoint = proxy_url.split('@')[1]  # Get IP:port after @
+                proxy_ip = proxy_endpoint.split(':')[0]  # Extract just the IP
+                
+                # Track unique IPs
+                self.proxy_ips_used.add(proxy_ip)
+                
+                # Check if IP changed from last request
+                if self.last_proxy_ip and proxy_ip != self.last_proxy_ip:
+                    if self.config.debug_mode:
+                        self._log(f"🔄 Proxy IP rotated: {self.last_proxy_ip} → {proxy_ip}")
+                
+                self.last_proxy_ip = proxy_ip
             
             return proxy_url
         except Exception as e:
@@ -233,7 +281,8 @@ class YARS:
                         self.request_count += 1
                         if self.config.debug_mode:
                             masked_proxy = current_proxy.split('@')[1] if '@' in current_proxy else current_proxy
-                            self._log(f"Using proxy #{self.request_count}: ...@{masked_proxy}")
+                            unique_ips = len(self.proxy_ips_used)
+                            self._log(f"Using proxy #{self.request_count}: ...@{masked_proxy} (Unique IPs so far: {unique_ips})")
                 
                 # Get API-specific headers for JSON endpoints
                 request_headers = self._get_browser_headers(

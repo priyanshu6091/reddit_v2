@@ -1,67 +1,78 @@
 {
-  "title": "YARS Reddit Scraper Input",
+  "title": "Reddit Scraper Input Configuration",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
     "startUrls": {
-      "title": "Start URLs",
+      "title": "📍 Start URLs",
       "type": "array",
-      "description": "List of Reddit URLs to scrape (posts, subreddits, users). Leave empty if using searches.",
+      "description": "Reddit URLs to scrape directly (posts, subreddits, user profiles). Supports posts (comments included), subreddit pages (hot/top/new posts), and user profiles. Leave empty if you want to use keyword searches instead. Example: https://reddit.com/r/Python/, https://reddit.com/user/spez",
       "editor": "requestListSources",
       "example": [
-        { "url": "https://www.reddit.com/r/Python/" },
-        { "url": "https://www.reddit.com/user/spez" }
+        {
+          "url": "https://www.reddit.com/r/Python/"
+        },
+        {
+          "url": "https://www.reddit.com/r/datascience/"
+        },
+        {
+          "url": "https://www.reddit.com/user/spez"
+        }
       ],
       "prefill": []
     },
     "searches": {
-      "title": "Search Terms",
+      "title": "🔍 Search Keywords",
       "type": "array",
-      "description": "Keywords to search for on Reddit. Leave empty if using startUrls.",
+      "description": "List of keywords to search across Reddit. Each search will find posts, comments, communities, or users matching your terms (based on what search types you enable below). Great for brand monitoring, trend analysis, or finding discussions on specific topics.",
       "editor": "stringList",
-      "example": ["Python programming", "machine learning"],
+      "example": [
+        "artificial intelligence",
+        "climate change",
+        "cryptocurrency"
+      ],
       "prefill": []
     },
     "searchCommunityName": {
-      "title": "Search Community",
+      "title": "🎯 Restrict to Subreddit",
       "type": "string",
-      "description": "Restrict search to a specific subreddit (e.g., 'Python'). Leave empty to search all Reddit.",
+      "description": "Optional: Limit your searches to a specific subreddit. Enter just the subreddit name without 'r/' (e.g., 'Python' not 'r/Python'). Leave empty to search all of Reddit. Useful for focused analysis of a single community.",
       "editor": "textfield",
-      "example": "Python",
+      "example": "datascience",
       "prefill": ""
     },
     "searchPosts": {
-      "title": "Search Posts",
+      "title": "📌 Search for Posts",
       "type": "boolean",
-      "description": "Enable searching for posts matching your keywords.",
+      "description": "Enable to find posts (submissions) matching your search keywords. Posts include title, text content, author, votes, and comments. This is the most common search type.",
       "default": true,
       "prefill": true
     },
     "searchComments": {
-      "title": "Search Comments",
+      "title": "💬 Search for Comments",
       "type": "boolean",
-      "description": "Enable searching for comments matching your keywords.",
+      "description": "Enable to find individual comments matching your keywords. Useful for finding specific discussions or replies. Returns comment text, author, votes, and parent post information.",
       "default": false,
       "prefill": false
     },
     "searchCommunities": {
-      "title": "Search Communities",
+      "title": "🌐 Search for Communities",
       "type": "boolean",
-      "description": "Enable searching for communities (subreddits) matching your keywords.",
+      "description": "Enable to find subreddits (communities) related to your keywords. Returns community name, description, member count, and category. Great for discovering relevant subreddits.",
       "default": false,
       "prefill": false
     },
     "searchUsers": {
-      "title": "Search Users",
+      "title": "👤 Search for Users",
       "type": "boolean",
-      "description": "Enable searching for users matching your keywords.",
+      "description": "Enable to find user profiles matching your keywords. Returns username, karma, account age, and recent activity. Useful for finding influencers or active community members.",
       "default": false,
       "prefill": false
     },
     "maxItems": {
-      "title": "Max Items",
+      "title": "🎯 Max Items (Global Limit)",
       "type": "integer",
-      "description": "Maximum total number of items to scrape across all sources. The scraper stops when this limit is reached.",
+      "description": "GLOBAL LIMIT: Maximum total number of items to scrape across ALL sources and searches. The Actor stops immediately when this limit is reached. Set this based on your credit budget. Lower values = lower costs. Recommended: 100 for testing, 1000+ for production.",
       "minimum": 1,
       "maximum": 10000,
       "default": 100,
@@ -69,9 +80,9 @@
       "unit": "items"
     },
     "maxPostCount": {
-      "title": "Max Posts Per Source",
+      "title": "📄 Max Posts Per Source",
       "type": "integer",
-      "description": "Maximum number of posts to scrape per subreddit or search term.",
+      "description": "Maximum posts to scrape from each subreddit or search term. Controls depth of scraping per source. Example: If you search 5 keywords with maxPostCount=20, you could get up to 100 posts (but limited by global maxItems).",
       "minimum": 1,
       "maximum": 1000,
       "default": 50,
@@ -79,9 +90,9 @@
       "unit": "posts"
     },
     "maxComments": {
-      "title": "Max Comments Per Post",
+      "title": "💬 Max Comments Per Post",
       "type": "integer",
-      "description": "Maximum number of comments to extract from each post.",
+      "description": "Maximum comments to extract from each post. Higher values give deeper discussion context but increase runtime. Set to 0 to skip comments entirely (fastest). Recommended: 20 for quick scraping, 100+ for deep analysis.",
       "minimum": 0,
       "maximum": 500,
       "default": 20,
@@ -89,9 +100,9 @@
       "unit": "comments"
     },
     "maxCommunitiesCount": {
-      "title": "Max Communities",
+      "title": "🌐 Max Communities to Find",
       "type": "integer",
-      "description": "Maximum number of communities to find when searching.",
+      "description": "Maximum number of communities (subreddits) to find when 'Search for Communities' is enabled. Only applies to community searches.",
       "minimum": 1,
       "maximum": 100,
       "default": 10,
@@ -99,9 +110,9 @@
       "unit": "communities"
     },
     "maxUserCount": {
-      "title": "Max Users",
+      "title": "👤 Max Users to Find",
       "type": "integer",
-      "description": "Maximum number of users to find when searching.",
+      "description": "Maximum number of user profiles to find when 'Search for Users' is enabled. Only applies to user searches.",
       "minimum": 1,
       "maximum": 100,
       "default": 10,
@@ -109,58 +120,87 @@
       "unit": "users"
     },
     "skipComments": {
-      "title": "Skip Comments",
+      "title": "⚡ Skip Comments (Fast Mode)",
       "type": "boolean",
-      "description": "Skip extracting comments from posts. Enables 10x faster scraping.",
+      "description": "Skip extracting comments from posts. Enables 10x faster scraping and significantly reduces credit usage. Enable this if you only need post data (titles, authors, votes) without discussions. Great for bulk post collection.",
       "default": false,
       "prefill": false
     },
     "skipUserPosts": {
-      "title": "Skip User Posts",
+      "title": "👤 Skip User Posts (Profile Only)",
       "type": "boolean",
-      "description": "When scraping users, only get their profile information without posts/comments.",
+      "description": "When scraping user profiles, only get their account information (karma, join date) without their post/comment history. Faster and uses fewer credits. Only relevant when scraping user URLs.",
       "default": false,
       "prefill": false
     },
     "sort": {
-      "title": "Sort Method",
+      "title": "📊 Sort Method",
       "type": "string",
-      "description": "How to sort search results and subreddit posts.",
-      "enum": ["relevance", "hot", "top", "new", "comments"],
-      "enumTitles": ["Relevance", "Hot", "Top", "New", "Most Comments"],
+      "description": "How to sort results when scraping subreddits or searches. 'relevance' = best matches for searches, 'top' = h ighest voted (use with time filter), 'hot' = trending now, 'new' = most recent, 'comments' = most discussed.",
+      "enum": [
+        "relevance",
+        "hot",
+        "top",
+        "new",
+        "comments"
+      ],
+      "enumTitles": [
+        "🎯 Relevance (Best Matches)",
+        "🔥 Hot (Trending)",
+        "⭐ Top (Highest Voted)",
+        "🆕 New (Most Recent)",
+        "💬 Comments (Most Discussed)"
+      ],
       "default": "relevance",
       "prefill": "relevance"
     },
     "time": {
-      "title": "Time Filter",
+      "title": "⏰ Time Filter",
       "type": "string",
-      "description": "Time range for filtering posts (mainly used with 'top' sort).",
-      "enum": ["hour", "day", "week", "month", "year", "all"],
-      "enumTitles": ["Past Hour", "Past Day", "Past Week", "Past Month", "Past Year", "All Time"],
+      "description": "Filter posts by time range. Most useful with 'top' sort to find highest-voted content from a specific period. 'week' and 'month' are recommended for current trends. 'all' gives all-time results but may include very old content.",
+      "enum": [
+        "hour",
+        "day",
+        "week",
+        "month",
+        "year",
+        "all"
+      ],
+      "enumTitles": [
+        "⏱️ Past Hour",
+        "📅 Past 24 Hours",
+        "📆 Past Week",
+        "🗓️ Past Month",
+        "🗓️ Past Year",
+        "♾️ All Time"
+      ],
       "default": "all",
       "prefill": "all"
     },
     "includeNSFW": {
-      "title": "Include NSFW Content",
+      "title": "🔞 Include NSFW Content",
       "type": "boolean",
-      "description": "Include Not Safe For Work (NSFW) content in results.",
+      "description": "Include Not Safe For Work (adult/sensitive) content in results. When disabled (recommended), NSFW posts are filtered out. Enable only if you specifically need adult content for your research.",
       "default": false,
       "prefill": false
     },
     "debugMode": {
-      "title": "Debug Mode",
+      "title": "🐛 Debug Mode",
       "type": "boolean",
-      "description": "Enable detailed logging for troubleshooting. Useful when developing or debugging issues.",
+      "description": "Enable detailed logging for troubleshooting. Shows request headers, proxy information, cookie details, and response statuses. Useful when debugging issues or verifying the scraper is working correctly. Increases log verbosity.",
       "default": false,
       "prefill": false
     },
     "proxy": {
-      "title": "Proxy Configuration",
+      "title": "🔒 Proxy Configuration",
       "type": "object",
-      "description": "Proxy settings for the Actor. Uses Apify proxy by default.",
+      "description": "Proxy settings for the Actor. IMPORTANT: Use Apify Proxy with RESIDENTIAL group for best results (100% success rate). Datacenter proxies may get blocked by Reddit. The default configuration is optimal - only change if you know what you're doing.",
       "editor": "proxy",
       "prefill": {
-        "useApifyProxy": true
+        "useApifyProxy": true,
+        "apifyProxyGroups": [
+          "RESIDENTIAL"
+        ]
       }
     }
   },
