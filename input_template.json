@@ -1,0 +1,24 @@
+{
+  "startUrls": [
+    "https://www.reddit.com/r/Python/",
+    "https://www.reddit.com/r/learnprogramming/comments/abc123/example_post/"
+  ],
+  "searches": ["machine learning", "data science"],
+  "searchCommunityName": null,
+  "searchPosts": true,
+  "searchComments": false,
+  "searchCommunities": false,
+  "searchUsers": false,
+  "maxItems": 100,
+  "maxPostCount": 50,
+  "maxComments": 20,
+  "maxCommunitiesCount": 10,
+  "maxUserCount": 10,
+  "skipComments": false,
+  "skipUserPosts": false,
+  "skipCommunity": false,
+  "sort": "top",
+  "time": "week",
+  "includeNSFW": false,
+  "debugMode": false
+}

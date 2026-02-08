@@ -1,0 +1,168 @@
+{
+  "title": "YARS Reddit Scraper Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrls": {
+      "title": "Start URLs",
+      "type": "array",
+      "description": "List of Reddit URLs to scrape (posts, subreddits, users). Leave empty if using searches.",
+      "editor": "requestListSources",
+      "example": [
+        { "url": "https://www.reddit.com/r/Python/" },
+        { "url": "https://www.reddit.com/user/spez" }
+      ],
+      "prefill": []
+    },
+    "searches": {
+      "title": "Search Terms",
+      "type": "array",
+      "description": "Keywords to search for on Reddit. Leave empty if using startUrls.",
+      "editor": "stringList",
+      "example": ["Python programming", "machine learning"],
+      "prefill": []
+    },
+    "searchCommunityName": {
+      "title": "Search Community",
+      "type": "string",
+      "description": "Restrict search to a specific subreddit (e.g., 'Python'). Leave empty to search all Reddit.",
+      "editor": "textfield",
+      "example": "Python",
+      "prefill": ""
+    },
+    "searchPosts": {
+      "title": "Search Posts",
+      "type": "boolean",
+      "description": "Enable searching for posts matching your keywords.",
+      "default": true,
+      "prefill": true
+    },
+    "searchComments": {
+      "title": "Search Comments",
+      "type": "boolean",
+      "description": "Enable searching for comments matching your keywords.",
+      "default": false,
+      "prefill": false
+    },
+    "searchCommunities": {
+      "title": "Search Communities",
+      "type": "boolean",
+      "description": "Enable searching for communities (subreddits) matching your keywords.",
+      "default": false,
+      "prefill": false
+    },
+    "searchUsers": {
+      "title": "Search Users",
+      "type": "boolean",
+      "description": "Enable searching for users matching your keywords.",
+      "default": false,
+      "prefill": false
+    },
+    "maxItems": {
+      "title": "Max Items",
+      "type": "integer",
+      "description": "Maximum total number of items to scrape across all sources. The scraper stops when this limit is reached.",
+      "minimum": 1,
+      "maximum": 10000,
+      "default": 100,
+      "prefill": 100,
+      "unit": "items"
+    },
+    "maxPostCount": {
+      "title": "Max Posts Per Source",
+      "type": "integer",
+      "description": "Maximum number of posts to scrape per subreddit or search term.",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 50,
+      "prefill": 50,
+      "unit": "posts"
+    },
+    "maxComments": {
+      "title": "Max Comments Per Post",
+      "type": "integer",
+      "description": "Maximum number of comments to extract from each post.",
+      "minimum": 0,
+      "maximum": 500,
+      "default": 20,
+      "prefill": 20,
+      "unit": "comments"
+    },
+    "maxCommunitiesCount": {
+      "title": "Max Communities",
+      "type": "integer",
+      "description": "Maximum number of communities to find when searching.",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 10,
+      "prefill": 10,
+      "unit": "communities"
+    },
+    "maxUserCount": {
+      "title": "Max Users",
+      "type": "integer",
+      "description": "Maximum number of users to find when searching.",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 10,
+      "prefill": 10,
+      "unit": "users"
+    },
+    "skipComments": {
+      "title": "Skip Comments",
+      "type": "boolean",
+      "description": "Skip extracting comments from posts. Enables 10x faster scraping.",
+      "default": false,
+      "prefill": false
+    },
+    "skipUserPosts": {
+      "title": "Skip User Posts",
+      "type": "boolean",
+      "description": "When scraping users, only get their profile information without posts/comments.",
+      "default": false,
+      "prefill": false
+    },
+    "sort": {
+      "title": "Sort Method",
+      "type": "string",
+      "description": "How to sort search results and subreddit posts.",
+      "enum": ["relevance", "hot", "top", "new", "comments"],
+      "enumTitles": ["Relevance", "Hot", "Top", "New", "Most Comments"],
+      "default": "relevance",
+      "prefill": "relevance"
+    },
+    "time": {
+      "title": "Time Filter",
+      "type": "string",
+      "description": "Time range for filtering posts (mainly used with 'top' sort).",
+      "enum": ["hour", "day", "week", "month", "year", "all"],
+      "enumTitles": ["Past Hour", "Past Day", "Past Week", "Past Month", "Past Year", "All Time"],
+      "default": "all",
+      "prefill": "all"
+    },
+    "includeNSFW": {
+      "title": "Include NSFW Content",
+      "type": "boolean",
+      "description": "Include Not Safe For Work (NSFW) content in results.",
+      "default": false,
+      "prefill": false
+    },
+    "debugMode": {
+      "title": "Debug Mode",
+      "type": "boolean",
+      "description": "Enable detailed logging for troubleshooting. Useful when developing or debugging issues.",
+      "default": false,
+      "prefill": false
+    },
+    "proxy": {
+      "title": "Proxy Configuration",
+      "type": "object",
+      "description": "Proxy settings for the Actor. Uses Apify proxy by default.",
+      "editor": "proxy",
+      "prefill": {
+        "useApifyProxy": true
+      }
+    }
+  },
+  "required": []
+}

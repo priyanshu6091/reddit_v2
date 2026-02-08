@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+actoroutput.json
+output.json
+test_enhanced.json
+.DS_Store
