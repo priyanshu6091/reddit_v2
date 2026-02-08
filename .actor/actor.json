@@ -3,118 +3,121 @@
   "name": "reddit-scraper",
   "title": "Reddit Scraper - Posts, Comments, Communities & Users",
   "description": "🚀 Most reliable Reddit scraper with 100% success rate. Scrape posts, comments, subreddits & user profiles without API key. Advanced anti-bot bypass, TLS fingerprinting, session-based proxies. Perfect for market research, sentiment analysis & data collection.",
-  "version": "1.0.14",
+  "version": "1.0",
   "meta": {
     "templateId": "python-start"
   },
   "input": "./input_schema.json",
-  "dockerfile\": \"./Dockerfile\",
-  \"readme\": \"./README.md\",
-  \"categories\": [\"SOCIAL_MEDIA\", \"DATA_COLLECTION\"],
-  \"seoTitle\": \"Reddit Scraper - Extract Posts, Comments & Communities (No API Key)\",
-  \"seoDescription\": \"Reliable Reddit scraper extracting posts, comments, communities, and user profiles. Zero 403 errors with advanced anti-bot detection. No API key required. Perfect for market research and data analysis.\",
-  \"isSafe\": true,
-  \"isDeprecated\": false,
-  \"storages\": {
-    \"dataset\": {
-      \"actorSpecification\": 1,
-      \"title\": \"Reddit Scraped Data\",
-      \"description\": \"Reddit posts, comments, communities, and user profiles in JSON format\",
-      \"views\": {
-        \"overview\": {
-          \"title\": \"Overview\",
-          \"description\": \"All scraped items with key fields\",
-          \"transformation\": {
-            \"fields\": [
-              \"dataType\",
-              \"title\",
-              \"username\",
-              \"communityName\",
-              \"upVotes\",
-              \"numberOfComments\",
-              \"createdAt\"
-]
-},
-          \"display\": {
-            \"component\": \"table\",
-            \"properties\": {
-              \"dataType\": {
-                \"label\": \"Type\",
-                \"format\": \"text\"
-},
-              \"title\": {
-                \"label\": \"Title/Content\",
-                \"format\": \"text\"
-},
-              \"username\": {
-                \"label\": \"Author\",
-                \"format\": \"text\"
-},
-              \"communityName\": {
-                \"label\": \"Community\",
-                \"format\": \"text\"
-},
-              \"upVotes\": {
-                \"label\": \"Upvotes\",
-                \"format\": \"number\"
-},
-              \"numberOfComments\": {
-                \"label\": \"Comments\",
-                \"format\": \"number\"
-},
-              \"createdAt\": {
-                \"label\": \"Created\",
-                \"format\": \"date\"
-}
-}
-}
-},
-        \"posts\": {
-          \"title\": \"Posts Only\",
-          \"description\": \"Filter to show only posts\",
-          \"transformation\": {
-            \"filter\": \"item.dataType === 'post'\",
-            \"fields\": [
-              \"title\",
-              \"username\",
-              \"communityName\",
-              \"upVotes\",
-              \"numberOfComments\",
-              \"createdAt\",
-              \"url\"
-]
-}
-},
-        \"comments\": {
-          \"title\": \"Comments Only\",
-          \"description\": \"Filter to show only comments\",
-          \"transformation\": {
-            \"filter\": \"item.dataType === 'comment'\",
-            \"fields\": [
-              \"body\",
-              \"username\",
-              \"upVotes\",
-              \"depth\",
-              \"createdAt\"
-]
-}
-},
-        \"communities\": {
-          \"title\": \"Communities Only\",
-          \"description\": \"Filter to show only communities\",
-          \"transformation\": {
-            \"filter\": \"item.dataType === 'community'\",
-            \"fields\": [
-              \"communityName\",
-              \"subscribers\",
-              \"description\",
-              \"category\",
-              \"createdAt\",
-              \"url\"
-]
-}
-}
-}
-}
-}
+  "dockerfile": "./Dockerfile",
+  "readme": "./README.md",
+  "categories": [
+    "SOCIAL_MEDIA",
+    "DATA_COLLECTION"
+  ],
+  "seoTitle": "Reddit Scraper - Extract Posts, Comments & Communities (No API Key)",
+  "seoDescription": "Reliable Reddit scraper extracting posts, comments, communities, and user profiles. Zero 403 errors with advanced anti-bot detection. No API key required. Perfect for market research and data analysis.",
+  "isSafe": true,
+  "isDeprecated": false,
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "title": "Reddit Scraped Data",
+      "description": "Reddit posts, comments, communities, and user profiles in JSON format",
+      "views": {
+        "overview": {
+          "title": "Overview",
+          "description": "All scraped items with key fields",
+          "transformation": {
+            "fields": [
+              "dataType",
+              "title",
+              "username",
+              "communityName",
+              "upVotes",
+              "numberOfComments",
+              "createdAt"
+            ]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "dataType": {
+                "label": "Type",
+                "format": "text"
+              },
+              "title": {
+                "label": "Title/Content",
+                "format": "text"
+              },
+              "username": {
+                "label": "Author",
+                "format": "text"
+              },
+              "communityName": {
+                "label": "Community",
+                "format": "text"
+              },
+              "upVotes": {
+                "label": "Upvotes",
+                "format": "number"
+              },
+              "numberOfComments": {
+                "label": "Comments",
+                "format": "number"
+              },
+              "createdAt": {
+                "label": "Created",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "posts": {
+          "title": "Posts Only",
+          "description": "Filter to show only posts",
+          "transformation": {
+            "filter": "item.dataType === 'post'",
+            "fields": [
+              "title",
+              "username",
+              "communityName",
+              "upVotes",
+              "numberOfComments",
+              "createdAt",
+              "url"
+            ]
+          }
+        },
+        "comments": {
+          "title": "Comments Only",
+          "description": "Filter to show only comments",
+          "transformation": {
+            "filter": "item.dataType === 'comment'",
+            "fields": [
+              "body",
+              "username",
+              "upVotes",
+              "depth",
+              "createdAt"
+            ]
+          }
+        },
+        "communities": {
+          "title": "Communities Only",
+          "description": "Filter to show only communities",
+          "transformation": {
+            "filter": "item.dataType === 'community'",
+            "fields": [
+              "communityName",
+              "subscribers",
+              "description",
+              "category",
+              "createdAt",
+              "url"
+            ]
+          }
+        }
+      }
+    }
+  }
 }

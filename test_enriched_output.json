@@ -1,0 +1,13 @@
+{
+    "searches": [
+        "Python programming"
+    ],
+    "searchPosts": true,
+    "maxItems": 5,
+    "maxPostCount": 5,
+    "skipComments": true,
+    "proxy": {
+        "useApifyProxy": false
+    },
+    "debugMode": true
+}

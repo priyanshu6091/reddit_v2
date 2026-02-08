@@ -875,6 +875,38 @@ class YARS:
             except (KeyError, IndexError):
                 pass
         
+        # Determine media type
+        media_type = 'text'
+        if post_data.get('is_video'):
+            media_type = 'video'
+        elif post_data.get('post_hint') == 'image' or image_url:
+            media_type = 'image'
+        elif post_data.get('is_gallery'):
+            media_type = 'gallery'
+        elif post_data.get('url') and not post_data.get('is_self'):
+            media_type = 'link'
+        
+        # Extract media URL (video or rich media)
+        media_url = None
+        if post_data.get('is_video') and 'media' in post_data:
+            try:
+                media_url = post_data['media']['reddit_video']['fallback_url']
+            except (KeyError, TypeError):
+                pass
+        
+        # Extract gallery images
+        gallery_images = []
+        if post_data.get('is_gallery') and 'gallery_data' in post_data:
+            try:
+                for item in post_data['gallery_data']['items']:
+                    media_id = item['media_id']
+                    if 'media_metadata' in post_data and media_id in post_data['media_metadata']:
+                        img_data = post_data['media_metadata'][media_id]
+                        if 's' in img_data and 'u' in img_data['s']:
+                            gallery_images.append(img_data['s']['u'].replace('&amp;', '&'))
+            except (KeyError, TypeError):
+                pass
+        
         return {
             'id': post_data.get('name'),
             'parsedId': post_data.get('id'),
@@ -887,9 +919,19 @@ class YARS:
             'html': post_data.get('selftext_html'),
             'numberOfComments': post_data.get('num_comments', 0),
             'upVotes': post_data.get('score', 0),
+            'downVotes': post_data.get('downs', 0),
+            'voteRatio': post_data.get('upvote_ratio', 0.0),
+            'flair': post_data.get('link_flair_text'),
+            'flairCssClass': post_data.get('link_flair_css_class'),
+            'awards': post_data.get('total_awards_received', 0),
+            'isPinned': post_data.get('stickied', False),
+            'isSpoiler': post_data.get('spoiler', False),
             'isVideo': post_data.get('is_video', False),
             'isAd': post_data.get('promoted', False),
             'over18': post_data.get('over_18', False),
+            'mediaType': media_type,
+            'mediaUrl': media_url,
+            'galleryImages': gallery_images if gallery_images else None,
             'createdAt': datetime.fromtimestamp(post_data.get('created_utc', 0)).isoformat() + 'Z',
             'scrapedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'permalink': post_data.get('permalink'),
@@ -913,38 +955,82 @@ class YARS:
             'createdAt': datetime.fromtimestamp(comment_data.get('created_utc', 0)).isoformat() + 'Z',
             'scrapedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'upVotes': comment_data.get('score', 0),
+            'downVotes': comment_data.get('downs', 0),
+            'awards': comment_data.get('total_awards_received', 0),
+            'depth': comment_data.get('depth', 0),
+            'isSubmitter': comment_data.get('is_submitter', False),
             'numberOfreplies': len(comment_data.get('replies', {}).get('data', {}).get('children', [])) if isinstance(comment_data.get('replies'), dict) else 0,
             'dataType': 'comment'
         }
     
     def _format_community(self, community_data: Dict) -> Dict:
         """Format community data to Apify-compatible structure"""
+        # Extract community icon
+        community_icon = community_data.get('community_icon', '').split('?')[0] if community_data.get('community_icon') else None
+        if not community_icon:
+            community_icon = community_data.get('icon_img', '').split('?')[0] if community_data.get('icon_img') else None
+        
         return {
             'id': community_data.get('id'),
             'name': community_data.get('name'),
             'title': community_data.get('display_name_prefixed'),
+            'communityName': f"r/{community_data.get('display_name')}" if community_data.get('display_name') else None,
+            'parsedCommunityName': community_data.get('display_name'),
             'headerImage': community_data.get('header_img'),
             'description': community_data.get('public_description'),
             'over18': community_data.get('over18', False),
             'createdAt': datetime.fromtimestamp(community_data.get('created_utc', 0)).isoformat() + 'Z',
             'scrapedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'numberOfMembers': community_data.get('subscribers', 0),
+            'subscribers': community_data.get('subscribers', 0),  # Alias for clarity
+            'activeUsers': community_data.get('active_user_count') or community_data.get('accounts_active', 0),
+            'category': community_data.get('advertiser_category') or 'General',
+            'communityIcon': community_icon,
+            'bannerImage': community_data.get('banner_img'),
             'url': f"{self.base_url}{community_data.get('url')}" if community_data.get('url') else None,
             'dataType': 'community'
         }
     
     def _format_user(self, user_data: Dict) -> Dict:
         """Format user data to Apify-compatible structure"""
+        # Calculate total karma and account age
+        post_karma = user_data.get('link_karma', 0)
+        comment_karma = user_data.get('comment_karma', 0)
+        total_karma = post_karma + comment_karma
+        
+        # Calculate account age
+        created_utc = user_data.get('created_utc', 0)
+        if created_utc:
+            account_age_days = int((datetime.now(timezone.utc).timestamp() - created_utc) / 86400)
+            if account_age_days < 30:
+                account_age = f"{account_age_days} days"
+            elif account_age_days < 365:
+                account_age = f"{int(account_age_days / 30)} months"
+            else:
+                account_age = f"{int(account_age_days / 365)} years"
+        else:
+            account_age = "Unknown"
+        
+        # Extract display name
+        display_name = None
+        if isinstance(user_data.get('subreddit'), dict):
+            display_name = user_data['subreddit'].get('title')
+        
         return {
             'id': user_data.get('id'),
             'url': f"{self.base_url}/user/{user_data.get('name')}",
             'username': user_data.get('name'),
+            'displayName': display_name or user_data.get('name'),
             'userIcon': user_data.get('icon_img', '').split('?')[0] if user_data.get('icon_img') else None,
-            'postKarma': user_data.get('link_karma', 0),
-            'commentKarma': user_data.get('comment_karma', 0),
+            'postKarma': post_karma,
+            'commentKarma': comment_karma,
+            'totalKarma': total_karma,
+            'accountAge': account_age,
             'description': user_data.get('subreddit', {}).get('public_description', '') if isinstance(user_data.get('subreddit'), dict) else '',
             'over18': user_data.get('subreddit', {}).get('over_18', False) if isinstance(user_data.get('subreddit'), dict) else False,
-            'createdAt': datetime.fromtimestamp(user_data.get('created_utc', 0)).isoformat() + 'Z',
+            'isGold': user_data.get('is_gold', False),
+            'isModerator': user_data.get('is_mod', False),
+            'createdAt': datetime.fromtimestamp(created_utc).isoformat() + 'Z' if created_utc else None,
             'scrapedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'dataType': 'user'
         }
