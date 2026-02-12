@@ -1,7 +1,35 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+node_modules/
+.node_modules/
+# Environment
 .env
-actoroutput.json
-output.json
-test_enhanced.json
+.venv
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Apify storage (local testing)
+storage/
+apify_storage/
+
+# Testing outputs
+output.json
+*.log

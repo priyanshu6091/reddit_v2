@@ -8,7 +8,7 @@
       "type": "array",
       "description": "Reddit URLs to scrape directly (posts, subreddits, user profiles). Supports posts (comments included), subreddit pages (hot/top/new posts), and user profiles. Leave empty if you want to use keyword searches instead. Example: https://reddit.com/r/Python/, https://reddit.com/user/spez",
       "editor": "requestListSources",
-      "example": [
+      "default": [
         {
           "url": "https://www.reddit.com/r/Python/"
         },
@@ -19,7 +19,15 @@
           "url": "https://www.reddit.com/user/spez"
         }
       ],
-      "prefill": []
+      "prefill": [{
+          "url": "https://www.reddit.com/r/Python/"
+        },
+        {
+          "url": "https://www.reddit.com/r/datascience/"
+        },
+        {
+          "url": "https://www.reddit.com/user/spez"
+        }]
     },
     "searches": {
       "title": "🔍 Search Keywords",

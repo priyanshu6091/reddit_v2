@@ -3,7 +3,7 @@
   "name": "reddit-scraper",
   "title": "Reddit Scraper - Posts, Comments, Communities & Users",
   "description": "🚀 Most reliable Reddit scraper with 100% success rate. Scrape posts, comments, subreddits & user profiles without API key. Advanced anti-bot bypass, TLS fingerprinting, session-based proxies. Perfect for market research, sentiment analysis & data collection.",
-  "version": "1.0",
+  "version": "0.1",
   "meta": {
     "templateId": "python-start"
   },
